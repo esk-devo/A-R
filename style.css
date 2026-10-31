@@ -83,11 +83,12 @@ p { margin: 0 0 1.1em; }
 /* ==========================================================
    01 — COVER
    ========================================================== */
-.cover { display: grid; place-items: center; text-align: center; color: var(--ivory); background: var(--marble); isolation: isolate; overflow: visible; padding-top: env(safe-area-inset-top, 0px); padding-right: max(var(--pad), env(safe-area-inset-right, 0px)); padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: max(var(--pad), env(safe-area-inset-left, 0px)); }
+.cover { display: grid; place-items: center; text-align: center; color: var(--ivory); background: var(--marble); isolation: isolate; overflow: clip; padding-top: env(safe-area-inset-top, 0px); padding-right: max(var(--pad), env(safe-area-inset-right, 0px)); padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: max(var(--pad), env(safe-area-inset-left, 0px)); }
 .cover__photo {
   position: absolute; inset: 0; z-index: -3;
-  animation: settle 2.8s var(--ease) both;
+  animation: settle 2.8s var(--ease) both, drift 30s ease-out 2.8s forwards;
 }
+@keyframes drift { from { transform: scale(1); } to { transform: scale(1.06); } }
 .cover__veil {
   position: absolute; inset: 0; z-index: -2;
   background:
@@ -465,8 +466,74 @@ p { margin: 0 0 1.1em; }
   }
 }
 
+/* ==========================================================
+   SCROLL REVEALS (only active under html.js-anim)
+   ========================================================== */
+html.js-anim .reveal,
+html.js-anim .reveal-frame,
+html.js-anim .reveal-grow,
+html.js-anim .reveal-fade,
+html.js-anim .reveal-line {
+  transition: opacity 1.2s var(--ease), transform 1.2s var(--ease);
+  transition-delay: calc(var(--i, 0) * 120ms);
+}
+html.js-anim .reveal { opacity: 0; transform: translateY(18px); }
+html.js-anim .reveal-frame { opacity: 0; transform: scale(.985); transition-duration: .9s; transform-origin: center; }
+html.js-anim .reveal-grow { opacity: 0; transform: scale(.9) rotate(-3deg); transition-duration: 1s; }
+html.js-anim .reveal-fade { opacity: 0; transition: opacity 1.2s var(--ease); }
+html.js-anim .reveal-line { opacity: 0; transform: scaleX(0); transition-duration: 1.4s; transform-origin: center; }
+
+.reveal-group.is-visible .reveal,
+.reveal-group.is-visible .reveal-frame,
+.reveal-group.is-visible .reveal-grow,
+.reveal-group.is-visible .reveal-fade,
+.reveal-group.is-visible .reveal-line {
+  opacity: 1; transform: none;
+}
+
+/* grow origins */
+.portrait__mat { transform-origin: center; }
+.portrait__floral--bl { transform-origin: left bottom; }
+.portrait__floral--tr { transform-origin: right top; }
+.portrait__leaves { transform-origin: center top; }
+.venue__mat { transform-origin: center; }
+.deco--photo-tl { transform-origin: left top; }
+.deco--photo-br { transform-origin: right bottom; }
+.deco--map-tr { transform-origin: right top; }
+.deco--map-bl { transform-origin: left bottom; }
+.deco--note-tl { transform-origin: left top; }
+.deco--note-br { transform-origin: right bottom; }
+.deco--note-side-l { transform-origin: left center; }
+.deco--note-side-r { transform-origin: right center; }
+
+/* countdown hairlines */
+.clock { border-top: none; border-bottom: none; }
+.clock::before, .clock::after {
+  content: ""; position: absolute; left: 0; right: 0; height: 1px;
+  background: rgba(212, 184, 135, .5); transform: scaleX(0); transform-origin: center;
+  transition: transform 1.4s var(--ease), opacity 1.2s var(--ease);
+  transition-delay: calc(var(--i, 2) * 120ms); opacity: 0;
+}
+html.js-anim .clock::before, html.js-anim .clock::after { opacity: 0; transform: scaleX(0); }
+.reveal-group.is-visible .clock::before,
+.reveal-group.is-visible .clock::after { opacity: 1; transform: scaleX(1); }
+.clock::before { top: 0; }
+.clock::after { bottom: 0; }
+
+.clock__unit + .clock__unit { border-left: none; position: relative; }
+.clock__unit + .clock__unit::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
+  background: rgba(212, 184, 135, .3); transform: scaleY(0); transform-origin: center;
+  transition: transform 1.4s var(--ease), opacity 1.2s var(--ease);
+  transition-delay: calc(var(--i, 2) * 120ms); opacity: 0;
+}
+html.js-anim .clock__unit + .clock__unit::before { opacity: 0; transform: scaleY(0); }
+.reveal-group.is-visible .clock__unit + .clock__unit::before { opacity: 1; transform: scaleY(1); }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .cover__photo, .cover__content > * { animation: none; }
   .enter { transition: none; }
+  .reveal, .reveal-frame, .reveal-grow, .reveal-fade, .reveal-line,
+  .clock::before, .clock::after, .clock__unit + .clock__unit::before { transition: none; opacity: 1; transform: none; }
 }

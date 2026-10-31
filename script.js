@@ -34,3 +34,16 @@
     var timer = setInterval(function () { if (!tick()) clearInterval(timer); }, 1000);
   }
 })();
+
+/* Scroll reveals — time-based, play once. */
+(function () {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+  window.__reveal = true;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.2, rootMargin: '0px 0px -10% 0px' });
+  document.querySelectorAll('.reveal-group').forEach(function (g) { io.observe(g); });
+})();
