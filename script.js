@@ -47,3 +47,30 @@
   }, { threshold: 0.2, rootMargin: '0px 0px -10% 0px' });
   document.querySelectorAll('.reveal-group').forEach(function (g) { io.observe(g); });
 })();
+// Background music — play/pause button, auto-play on first click to story section.
+(function () {
+  var audio = document.getElementById('bgm');
+  var btn = document.getElementById('soundBtn');
+  var enter = document.querySelector('.enter[href="#story"]');
+  if (!audio || !btn) return;
+  var manualPause = false;
+
+  function setState(on) {
+    btn.classList.toggle('is-on', on);
+    btn.setAttribute('aria-pressed', on);
+    btn.setAttribute('aria-label', on ? 'Pause music' : 'Play music');
+  }
+  function play() {
+    audio.volume = 0.5;
+    var p = audio.play();
+    if (p && p.then) p.then(function () { setState(true); }).catch(function () { setState(false); });
+  }
+  btn.addEventListener('click', function () {
+    if (audio.paused) { manualPause = false; play(); }
+    else { manualPause = true; audio.pause(); setState(false); }
+  });
+  if (enter) enter.addEventListener('click', function () {
+    if (audio.paused && !manualPause) play();
+  }, { once: true });
+  audio.addEventListener('error', function () { btn.hidden = true; });
+})();

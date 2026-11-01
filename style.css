@@ -537,3 +537,21 @@ html.js-anim .clock__unit + .clock__unit::before { opacity: 0; transform: scaleY
   .reveal, .reveal-frame, .reveal-grow, .reveal-fade, .reveal-line,
   .clock::before, .clock::after, .clock__unit + .clock__unit::before { transition: none; opacity: 1; transform: none; }
 }
+/* background Music */
+.sound {
+  position: fixed; z-index: 50;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  width: 2.75rem; height: 2.75rem; border-radius: 50%;
+  display: grid; place-items: center; cursor: pointer;
+  border: 1px solid #b3925a;
+  background: rgba(19, 21, 11, .55);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  color: #f4ecdc;
+  transition: background-color .4s;
+}
+.sound:hover { background: rgba(179, 146, 90, .22); }
+.sound svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.sound .waves { display: none; }
+.sound.is-on .waves { display: block; }
+.sound.is-on .slash { display: none; }
